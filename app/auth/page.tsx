@@ -7,6 +7,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
 import { FaGithub } from "react-icons/fa";
+import Image from "next/image";
 
 const Auth = () => {
   const router = useRouter();
@@ -60,9 +61,11 @@ const Auth = () => {
     >
       {/* Logo top-left */}
       <nav className="absolute top-4 left-4 z-20">
-        <img
+        <Image
           src="/logo.jpg"
           alt="Logo"
+          width={64}
+          height={64}
           className="h-16 w-auto cursor-pointer"
           onClick={() => router.push("/home")}
         />

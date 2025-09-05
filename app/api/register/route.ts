@@ -1,45 +1,21 @@
-import { NextResponse } from "next/server";
-import bcrypt from "bcryptjs";
+import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
+import bcrypt from "bcryptjs";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
-    const { email, name, password } = await req.json();
-
-    console.log("Register request body:", { email, name, password });
-
-    if (!email || !name || !password) {
-      return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 422 }
-      );
-    }
+    const { email, password } = await req.json();
+    if (!email || !password) return NextResponse.json({ error: "Missing fields" }, { status: 400 });
 
     const existingUser = await prismadb.user.findUnique({ where: { email } });
-    if (existingUser) {
-      return NextResponse.json(
-        { error: "Email already exists" },
-        { status: 422 }
-      );
-    }
+    if (existingUser) return NextResponse.json({ error: "User already exists" }, { status: 409 });
 
-    const hashedPassword = await bcrypt.hash(password, 12);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await prismadb.user.create({ data: { email, hashedPassword } });
 
-    const user = await prismadb.user.create({
-      data: {
-        email,
-        name,
-        hashedPassword,
-        image: "",           // your schema allows null, empty string is fine
-        emailVerified: null, // match nullable field in Prisma
-      },
-    });
-
-    console.log("User created:", user);
-
-    return NextResponse.json({ message: "User registered", user }, { status: 201 });
-  } catch (error) {
-    console.error("Registration Error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(user, { status: 201 });
+  } catch (err) {
+    console.error("POST /api/register", err);
+    return NextResponse.json({ error: "Failed to register user" }, { status: 500 });
   }
 }
