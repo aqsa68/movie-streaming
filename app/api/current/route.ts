@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import serverAuth from "@/lib/serverAuth";
 
+// Force this API route to be dynamic
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const { currentUser } = await serverAuth();
