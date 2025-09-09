@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
+export const dynamic = "force-dynamic";import { NextResponse } from "next/server";
 import prisma from "@/lib/prismadb"; // adjust path if different
-export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     // Get random 6 movies
