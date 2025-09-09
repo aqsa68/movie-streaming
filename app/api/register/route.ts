@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prismadb from "@/lib/prismadb";
 import bcrypt from "bcryptjs";
-
+export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const { email, password } = await req.json();
